@@ -1,0 +1,14 @@
+/* src/styles/HeaderEntryPage.css */
+
+.header {
+    background-color: transparent; /* Transparent background for the header */
+    box-shadow: none; /* Remove default shadow */
+}
+
+.header-title {
+    color: red; /* Red color for the title */
+    font-family: 'Poppins', sans-serif; /* Use a modern font */
+    font-weight: bold; /* Make the text bold */
+    margin: 0; /* Remove default margin */
+}
+

@@ -1,0 +1,31 @@
+/* src/styles/HeroSection.css */
+
+.hero-section {
+    position: relative;
+    height: 100vh; /* Full viewport height */
+    overflow: hidden;
+}
+
+.hero-slide {
+    position: relative;
+    height: 100vh; /* Ensure each slide takes full height */
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cover the entire section */
+    z-index: -1; /* Send the image behind the content */
+}
+
+.hero-overlay {
+    position: relative;
+    z-index: 1; /* Bring the overlay content above the background */
+    text-align: center; /* Center the text */
+    padding: 20px; /* Add some padding */
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay for better text visibility */
+    color: white; /* Ensure text is visible */
+}

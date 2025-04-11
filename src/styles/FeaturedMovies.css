@@ -1,0 +1,11 @@
+/* src/styles/FeaturedMovies.css */
+
+.movie-card {
+    transition: transform 0.3s; /* Smooth transition for hover effect */
+}
+
+.movie-card:hover {
+    transform: scale(1.05); /* Scale up on hover */
+}
+
+/* Add any additional styles you want for Featured Movies */

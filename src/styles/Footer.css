@@ -1,0 +1,54 @@
+/* src/styles/Footer.css */
+
+.footer {
+    background-color: rgba(34, 34, 34, 0.8); /* Semi-transparent dark background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Padding for top and bottom */
+    position: relative; /* Change to relative to allow it to flow with the content */
+    z-index: 1000; /* Ensure it is above other content */
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-between; /* Space between items */
+    align-items: center; /* Center items vertically */
+}
+
+/* Optional: Add a media query for responsiveness */
+@media (max-width: 600px) {
+    .footer {
+        padding: 10px; /* Adjust padding for smaller screens */
+    }
+}
+
+.footer-link {
+    color: #fff; /* White links */
+    text-decoration: none; /* No underline */
+    margin-left: 10px; /* Space between links */
+}
+
+.footer-link:hover {
+    text-decoration: underline; /* Underline on hover for better visibility */
+}
+
+
+.footer-link {
+    color: #fff; /* White links */
+    text-decoration: none; /* No underline */
+    margin-left: 10px; /* Space between links */
+}
+
+.footer-icon {
+    color: white; /* White icons */
+    margin: 0 15px; /* Improved spacing between icons */
+    font-size: 1.5rem; /* Icon size */
+    text-decoration: none; /* No underline */
+}
+
+.footer-icon:hover {
+    color: #ccc; /* Change color on hover */
+}
+
+/* Optional: Add a media query for responsiveness */
+@media (max-width: 600px) {
+    .footer {
+        padding: 10px; /* Adjust padding for smaller screens */
+    }
+}
