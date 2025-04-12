@@ -54,7 +54,7 @@ const RegistrationPage = ({ handleOpenLogin, handleClose }) => { // Add handleCl
 
     return (
         <div className="login-container">
-            <button 
+            <div 
                 onClick={handleClose} 
                 className="close-button"
                 style={{ 
@@ -62,14 +62,25 @@ const RegistrationPage = ({ handleOpenLogin, handleClose }) => { // Add handleCl
                     position: 'absolute', 
                     top: '10px', 
                     left: '10px',
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '20px',
-                    color: '#333'
+                    width: '24px',
+                    height: '24px'
                 }}
             >
-                ×
-            </button>
+                <svg 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{ width: '100%', height: '100%' }}
+                >
+                    <path 
+                        d="M18 6L6 18M6 6l12 12" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                    />
+                </svg>
+            </div>
             <h2>Register</h2>
             {error && <div className="error-message">{error}</div>}
             <form onSubmit={handleSubmit}> {/* Attach handleSubmit to the form */}
