@@ -18,12 +18,14 @@ import React, { useEffect, useState } from 'react';
 import { fetchFeaturedTVShows } from '../api'; // Import the API function
 import { Box, Card, CardMedia, CardContent, Typography, Button } from '@mui/material';
 import Slider from 'react-slick'; // Import the slider component
+import { useNavigate } from 'react-router-dom';
 import 'slick-carousel/slick/slick.css'; 
 import 'slick-carousel/slick/slick-theme.css'; 
 import '../styles/FeaturedTVShows.css'; // Import custom CSS for styling
 
 const FeaturedTVShows = () => {
     const [tvShows, setTVShows] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadTVShows = async () => {
@@ -37,6 +39,12 @@ const FeaturedTVShows = () => {
 
         loadTVShows();
     }, []);
+
+    const handleWatchNow = (show) => {
+        const showId = show.id || show._id;
+        console.log('Navigating to TV show details:', showId);
+        navigate(`/details/${showId}`);
+    };
 
     // Slider settings
     const settings = {
@@ -67,11 +75,11 @@ const FeaturedTVShows = () => {
                 </Typography>
                 <Slider {...settings}>
                     {tvShows.map((show) => (
-                        <Card key={show.id} className="tv-show-card" sx={{ width: 'calc(33.33% - 20px)', height: 350, margin: '0 10px', position: 'relative' }}> {/* Set position relative for absolute positioning of content */}
+                        <Card key={show._id} className="tv-show-card" sx={{ width: 'calc(33.33% - 20px)', height: 350, margin: '0 10px', position: 'relative' }}> {/* Set position relative for absolute positioning of content */}
                             <CardMedia
                                 component="img"
                                 height="250" // Set height for the image
-                                image={show.thumbnailUrl}
+                                image={show.smallPosterUrl}
                                 alt={show.title}
                                 sx={{ objectFit: 'cover' }} // Ensure the image covers the area
                             />
@@ -93,7 +101,7 @@ const FeaturedTVShows = () => {
                                     size="small" 
                                     variant="contained" 
                                     color="primary" 
-                                    onClick={() => window.open(show.videoUrl, '_blank')} // Open video URL in a new tab
+                                    onClick={() => handleWatchNow(show)}
                                 >
                                     Watch Now
                                 </Button>

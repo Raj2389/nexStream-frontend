@@ -1,4 +1,3 @@
-
 /**
  * MovieItem.js
  * 
@@ -19,11 +18,11 @@ import { Card, CardMedia, CardContent, Typography } from '@mui/material';
 function MovieItem({ movie }) {
     return (
         <Card sx={{ width: 200, margin: 1 }}>
-            <Link to={`/movie/${movie.id}`} style={{ textDecoration: 'none', color: 'white' }}>
+            <Link to={`/movie/${movie._id}`} style={{ textDecoration: 'none', color: 'white' }}>
                 <CardMedia
                     component="img"
                     height="300"
-                    image={movie.imageUrl}
+                    image={movie.smallPosterUrl}
                     alt={movie.title}
                 />
                 <CardContent style={{ backgroundColor: '#222' }}>

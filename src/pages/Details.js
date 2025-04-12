@@ -12,14 +12,24 @@ const Details = () => {
     const [error, setError] = useState(null); // Error state
 
     useEffect(() => {
+        console.log('Details component mounted with ID:', id);
         const loadContent = async () => {
             try {
-                const fetchedContent = await fetchContentById(id); // Fetch content by ID
-                setContent(fetchedContent); // Set the fetched content
+                console.log('Loading content for ID:', id);
+                if (!id) {
+                    throw new Error('No ID provided');
+                }
+                const fetchedContent = await fetchContentById(id);
+                console.log('Fetched content:', fetchedContent);
+                if (!fetchedContent) {
+                    throw new Error('No content found');
+                }
+                setContent(fetchedContent);
             } catch (error) {
-                setError('Failed to load content.'); // Set error message
+                console.error('Error in loadContent:', error);
+                setError(error.message || 'Failed to load content.');
             } finally {
-                setLoading(false); // Set loading to false
+                setLoading(false);
             }
         };
 
@@ -33,7 +43,7 @@ const Details = () => {
     if (error) {
         return (
             <Box sx={{ padding: 4 }}>
-                <Typography variant="h5">{error}</Typography>
+                <Typography variant="h5" color="error">{error}</Typography>
                 <Button variant="contained" color="primary" onClick={() => navigate(-1)}>
                     Go Back
                 </Button>
@@ -60,7 +70,7 @@ const Details = () => {
                     <CardMedia
                         component="img"
                         height="400"
-                        image={content.thumbnailUrl}
+                        image={content.largePosterUrl}
                         alt={content.title}
                     />
                     <CardContent>

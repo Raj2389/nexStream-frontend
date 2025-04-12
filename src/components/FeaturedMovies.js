@@ -19,12 +19,14 @@ import React, { useEffect, useState } from 'react';
 import { fetchFeaturedMovies } from '../api'; // Import the API function
 import { Box, Card, CardMedia, CardContent, Typography, Button } from '@mui/material';
 import Slider from 'react-slick'; // Import the slider component
+import { useNavigate } from 'react-router-dom';
 import 'slick-carousel/slick/slick.css'; 
 import 'slick-carousel/slick/slick-theme.css'; 
 import '../styles/FeaturedMovies.css'; // Import custom CSS for styling
 
 const FeaturedMovies = () => {
     const [movies, setMovies] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadMovies = async () => {
@@ -38,6 +40,12 @@ const FeaturedMovies = () => {
 
         loadMovies();
     }, []);
+
+    const handleWatchNow = (movie) => {
+        const movieId = movie.id || movie._id;
+        console.log('Navigating to movie details:', movieId);
+        navigate(`/details/${movieId}`);
+    };
 
     // Slider settings
     const settings = {
@@ -68,11 +76,11 @@ const FeaturedMovies = () => {
                 </Typography>
                 <Slider {...settings}>
                     {movies.map((movie) => (
-                        <Card key={movie.id} className="movie-card" sx={{ width: 'calc(33.33% - 20px)', height: 350, margin: '0 10px', position: 'relative' }}> {/* Adjust width to fit 3 cards */}
+                        <Card key={movie._id} className="movie-card" sx={{ width: 'calc(33.33% - 20px)', height: 350, margin: '0 10px', position: 'relative' }}> {/* Adjust width to fit 3 cards */}
                             <CardMedia
                                 component="img"
                                 height="250" // Set height for the image
-                                image={movie.thumbnailUrl}
+                                image={movie.smallPosterUrl}
                                 alt={movie.title}
                                 sx={{ objectFit: 'cover' }} // Ensure the image covers the area
                             />
@@ -94,7 +102,7 @@ const FeaturedMovies = () => {
                                     size="small" 
                                     variant="contained" 
                                     color="primary" 
-                                    onClick={() => window.open(movie.videoUrl, '_blank')} // Open video URL in a new tab
+                                    onClick={() => handleWatchNow(movie)}
                                 >
                                     Watch Now
                                 </Button>

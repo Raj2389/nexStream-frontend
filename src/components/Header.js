@@ -19,24 +19,29 @@
 
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Box, TextField } from '@mui/material'; // Import TextField
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search'; // Import Material-UI Search icon
 import ProfileIcon from './ProfileIcon'; // Import the ProfileIcon component
 import { searchContent } from '../api'; // Import the search function
 
 const Header = () => {
     const [searchTerm, setSearchTerm] = useState(''); // State to hold the search term
+    const navigate = useNavigate();
 
     const handleSearch = async () => {
         try {
             const results = await searchContent(searchTerm); // Fetch search results based on the search term
             console.log('Search Results:', results); // Log the search results for debugging
 
-            // Check if there are results and open the video link of the first movie or TV show
+            // If there are results, navigate to the details page of the first result
             if (results.movies.length > 0) {
-                window.open(results.movies[0].videoUrl, '_blank'); // Open the video URL in a new tab
+                const movieId = results.movies[0].id || results.movies[0]._id;
+                console.log('Navigating to movie details:', movieId);
+                navigate(`/details/${movieId}`);
             } else if (results.tvShows.length > 0) {
-                window.open(results.tvShows[0].videoUrl, '_blank'); // Open the video URL in a new tab
+                const showId = results.tvShows[0].id || results.tvShows[0]._id;
+                console.log('Navigating to TV show details:', showId);
+                navigate(`/details/${showId}`);
             } else {
                 console.log('No results found'); // Log if no results are found
             }
@@ -49,9 +54,21 @@ const Header = () => {
         <AppBar position="static" sx={{ backgroundColor: '#000000' }}> {/* Set background color to black */}
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography variant="h6" sx={{ color: 'red', marginRight: 2 }}> {/* Set NexStream color to red */}
-                        NexStream
-                    </Typography>
+                    <Link to="/home" style={{ textDecoration: 'none' }}>
+                        <Typography 
+                            variant="h6" 
+                            sx={{ 
+                                color: 'red', 
+                                marginRight: 2,
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    opacity: 0.8
+                                }
+                            }}
+                        >
+                            NexStream
+                        </Typography>
+                    </Link>
                     <Link to="/home" style={{ textDecoration: 'none', color: 'white' }}>
                         <Button color="inherit">Home</Button>
                     </Link>

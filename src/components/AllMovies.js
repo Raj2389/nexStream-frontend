@@ -1,78 +1,126 @@
 import React, { useEffect, useState } from 'react';
-import { fetchMovies } from '../api'; // Import the API function
-import { Box, Card, CardMedia, CardContent, Typography, Button } from '@mui/material';
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import { Box, Typography, Card, CardMedia, CardContent, Button } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import { fetchMovies } from '../api';
 
 const AllMovies = () => {
     const [movies, setMovies] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadMovies = async () => {
             try {
-                const fetchedMovies = await fetchMovies(); // Fetch all movies
+                const fetchedMovies = await fetchMovies();
+                console.log('Raw fetched movies data:', fetchedMovies);
+                if (Array.isArray(fetchedMovies)) {
+                    console.log('First movie in array:', fetchedMovies[0]);
+                    console.log('First movie ID:', fetchedMovies[0]?.id || fetchedMovies[0]?._id);
+                }
                 setMovies(fetchedMovies);
             } catch (error) {
+                setError('Failed to load movies');
                 console.error('Error loading movies:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
         loadMovies();
     }, []);
 
+    const handleWatchNow = (movie) => {
+        console.log('Watch Now clicked for movie:', movie);
+        const movieId = movie.id || movie._id;
+        console.log('Movie ID being used:', movieId);
+        if (!movieId) {
+            console.error('No movie ID provided');
+            return;
+        }
+        navigate(`/details/${movieId}`);
+    };
+
+    if (loading) {
+        return <Typography>Loading...</Typography>;
+    }
+
+    if (error) {
+        return <Typography color="error">{error}</Typography>;
+    }
+
     return (
-        <Box sx={{ padding: 2 }}>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-                {movies.map((movie) => (
-                    <Card key={movie.id} sx={{ width: 250, height: 350, margin: '10px', position: 'relative' }}>
-                        <CardMedia
-                            component="img"
-                            height="250"
-                            image={movie.thumbnailUrl}
-                            alt={movie.title}
-                            sx={{ objectFit: 'cover' }}
-                        />
-                        <CardContent 
-                            sx={{ 
-                                position: 'absolute', 
-                                bottom: 0, 
-                                left: 0,
-                                right: 0,
-                                backgroundColor: 'rgba(0, 0, 0, 0.7)', 
-                                color: 'white',
-                                padding: '8px' 
-                            }}
-                        >
-                            <Typography 
-                                gutterBottom 
-                                variant="h6" 
-                                component="div" 
-                                sx={{ 
-                                    fontSize: '1rem', 
-                                    overflow: 'hidden', 
-                                    textOverflow: 'ellipsis', 
-                                    display: '-webkit-box', 
-                                    WebkitBoxOrient: 'vertical', 
-                                    WebkitLineClamp: 2, 
-                                    maxHeight: '3em' 
-                                }}
-                            >
-                                {movie.title}
-                            </Typography>
-                            <Link to={{
-                                pathname: `/details/${movie.id}`, // Correct path to the Details page
-                                state: movie // Pass the entire movie as state
+        <Box sx={{ 
+            padding: '40px 80px',
+            maxWidth: '1600px',
+            margin: '0 auto'
+        }}>
+            <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>
+                All Movies
+            </Typography>
+            <Box sx={{ 
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: 3
+            }}>
+                {movies.map((movie) => {
+                    console.log('Rendering movie:', movie);
+                    const movieId = movie.id || movie._id;
+                    console.log('Movie ID:', movieId);
+                    return (
+                        <Card key={movieId} sx={{ 
+                            width: '100%',
+                            height: 320,
+                            display: 'flex',
+                            flexDirection: 'column'
+                        }}>
+                            <CardMedia
+                                component="img"
+                                height="180"
+                                image={movie.smallPosterUrl}
+                                alt={movie.title}
+                                sx={{ objectFit: 'cover' }}
+                            />
+                            <CardContent sx={{ 
+                                flexGrow: 1,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                p: 2
                             }}>
+                                <Typography 
+                                    gutterBottom 
+                                    variant="h6" 
+                                    component="div"
+                                    sx={{ 
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        display: '-webkit-box',
+                                        WebkitLineClamp: 2,
+                                        WebkitBoxOrient: 'vertical',
+                                        mb: 1
+                                    }}
+                                >
+                                    {movie.title}
+                                </Typography>
                                 <Button 
-                                    size="small" 
                                     variant="contained" 
-                                    color="primary"
+                                    color="primary" 
+                                    onClick={() => handleWatchNow(movie)}
+                                    size="small"
+                                    sx={{ 
+                                        width: 'fit-content',
+                                        alignSelf: 'flex-start',
+                                        fontSize: '0.875rem',
+                                        py: 0.5
+                                    }}
                                 >
                                     Watch Now
                                 </Button>
-                            </Link>
-                        </CardContent>
-                    </Card>
-                ))}
+                            </CardContent>
+                        </Card>
+                    );
+                })}
             </Box>
         </Box>
     );

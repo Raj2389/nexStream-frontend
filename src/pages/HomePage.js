@@ -12,7 +12,10 @@
  * - It then displays sections for featured movies and TV shows, followed by 
  *   lists of all movies and TV shows.
  */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { fetchFeaturedMovies, fetchFeaturedTVShows } from '../api';
+import '../styles/HomePage.css';
 import Header from '../components/Header';
 import HeroSection from '../components/HeroSection'; // Import the HeroSection component
 import FeaturedMovies from '../components/FeaturedMovies'; // Import the FeaturedMovies component
@@ -23,6 +26,41 @@ import AllTVShows from '../components/AllTVShows'; // Import the AllTVShows comp
 import { Box } from '@mui/material'; // Import Box from Material-UI for layout
 
 const HomePage = () => {
+    const [featuredMovies, setFeaturedMovies] = useState([]);
+    const [featuredTVShows, setFeaturedTVShows] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const loadFeaturedContent = async () => {
+            try {
+                setLoading(true);
+                const [movies, tvShows] = await Promise.all([
+                    fetchFeaturedMovies(),
+                    fetchFeaturedTVShows()
+                ]);
+                setFeaturedMovies(movies);
+                setFeaturedTVShows(tvShows);
+                setError(null);
+            } catch (err) {
+                setError('Failed to load featured content. Please try again later.');
+                console.error('Error loading featured content:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadFeaturedContent();
+    }, []);
+
+    if (loading) {
+        return <div className="loading">Loading featured content...</div>;
+    }
+
+    if (error) {
+        return <div className="error">{error}</div>;
+    }
+
     return (
         <Box sx={{ backgroundColor: 'black', minHeight: '100vh', color: 'white', display: 'flex', flexDirection: 'column' }}>
             <Header />

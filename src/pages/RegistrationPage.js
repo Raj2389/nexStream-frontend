@@ -12,31 +12,89 @@
  * - Upon successful registration, the user is navigated to the home page.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { registerUser } from '../api';
 import '../styles/LoginPage.css'; // Reuse the CSS file from the login page for consistent styling
 
 const RegistrationPage = ({ handleOpenLogin }) => { // Accept handleOpenLogin as a prop
     const navigate = useNavigate(); // Initialize useNavigate
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: ''
+    });
+    const [error, setError] = useState('');
 
-    const handleSubmit = (event) => {
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent the default form submission
-        // Here you can add your registration logic (e.g., API call)
+        setError('');
+        
+        try {
+            await registerUser(formData);
+            navigate('/home');
+        } catch (err) {
+            setError(err.message || 'Registration failed. Please try again.');
+        }
+    };
 
-        // After successful registration, navigate to the home page
-        navigate('/home'); // Change '/home' to your actual home route if different
+    const handleForgotPassword = () => {
+        // Navigate to forgot password page or show forgot password modal
+        navigate('/forgot-password');
     };
 
     return (
         <div className="login-container">
             <h2>Register</h2>
+            {error && <div className="error-message">{error}</div>}
             <form onSubmit={handleSubmit}> {/* Attach handleSubmit to the form */}
-                <input type="text" placeholder="Name" required />
-                <input type="email" placeholder="Email Address" required />
-                <input type="password" placeholder="Password" required />
+                <input
+                    type="text"
+                    name="firstName"
+                    placeholder="First Name"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Last Name"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                />
                 <button type="submit">Register</button>
             </form>
             <p className="or-text">OR</p>
+            <p className="forgot-password">
+                <span onClick={handleForgotPassword} style={{ cursor: 'pointer', color: 'blue' }}>Forgot Password?</span>
+            </p>
             <p className="existing-user">
                 Already a user? <span onClick={handleOpenLogin} style={{ cursor: 'pointer', color: 'blue' }}>Click here</span> {/* Call handleOpenLogin on click */}
             </p>
