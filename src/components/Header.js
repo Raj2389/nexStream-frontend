@@ -26,24 +26,31 @@ import { searchContent } from '../api'; // Import the search function
 
 const Header = () => {
     const [searchTerm, setSearchTerm] = useState(''); // State to hold the search term
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // Add useNavigate hook
 
     const handleSearch = async () => {
         try {
             const results = await searchContent(searchTerm); // Fetch search results based on the search term
             console.log('Search Results:', results); // Log the search results for debugging
 
-            // If there are results, navigate to the details page of the first result
+            // Navigate to the details page of the first result found
             if (results.movies.length > 0) {
-                const movieId = results.movies[0].id || results.movies[0]._id;
-                console.log('Navigating to movie details:', movieId);
-                navigate(`/details/${movieId}`);
+                navigate(`/details/${results.movies[0].id}`, { 
+                    state: { 
+                        type: 'movie',
+                        ...results.movies[0]
+                    } 
+                });
             } else if (results.tvShows.length > 0) {
-                const showId = results.tvShows[0].id || results.tvShows[0]._id;
-                console.log('Navigating to TV show details:', showId);
-                navigate(`/details/${showId}`);
+                navigate(`/details/${results.tvShows[0].id}`, { 
+                    state: { 
+                        type: 'tvshow',
+                        ...results.tvShows[0]
+                    } 
+                });
             } else {
                 console.log('No results found'); // Log if no results are found
+                // You might want to show a message to the user here
             }
         } catch (error) {
             console.error('Error during search:', error); // Log any errors encountered
@@ -54,21 +61,9 @@ const Header = () => {
         <AppBar position="static" sx={{ backgroundColor: '#000000' }}> {/* Set background color to black */}
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Link to="/home" style={{ textDecoration: 'none' }}>
-                        <Typography 
-                            variant="h6" 
-                            sx={{ 
-                                color: 'red', 
-                                marginRight: 2,
-                                cursor: 'pointer',
-                                '&:hover': {
-                                    opacity: 0.8
-                                }
-                            }}
-                        >
-                            NexStream
-                        </Typography>
-                    </Link>
+                    <Typography variant="h6" sx={{ color: 'red', marginRight: 2 }}> {/* Set NexStream color to red */}
+                        NexStream
+                    </Typography>
                     <Link to="/home" style={{ textDecoration: 'none', color: 'white' }}>
                         <Button color="inherit">Home</Button>
                     </Link>

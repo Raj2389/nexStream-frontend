@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { fetchFeaturedContentTvShows } from '../api'; // Import the API function
 import { Box, Typography, Button } from '@mui/material';
 import Slider from 'react-slick'; // Import the slider component
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import { Link } from 'react-router-dom'; // Import Link for navigation
 import 'slick-carousel/slick/slick.css'; 
 import 'slick-carousel/slick/slick-theme.css'; 
 import '../styles/HeroSection.css'; // Import custom CSS for styling
 
 const HeroSection = () => {
     const [content, setContent] = useState([]); // Store multiple movies or TV shows
-    const navigate = useNavigate();
 
     useEffect(() => {
         const loadContent = async () => {
@@ -23,12 +22,6 @@ const HeroSection = () => {
 
         loadContent();
     }, []);
-
-    const handleWatchNow = (item) => {
-        const itemId = item.id || item._id;
-        console.log('Navigating to details:', itemId);
-        navigate(`/details/${itemId}`);
-    };
 
     // Slider settings
     const settings = {
@@ -47,7 +40,7 @@ const HeroSection = () => {
             {content.length > 0 ? (
                 <Slider {...settings}>
                     {content.map((item) => (
-                        <Box key={item._id} className="hero-slide" sx={{ height: '100vh' }}>
+                        <Box key={item.id} className="hero-slide" sx={{ height: '100vh' }}>
                             <img
                                 src={item.largePosterUrl}
                                 alt={item.title}
@@ -55,67 +48,56 @@ const HeroSection = () => {
                                 style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }}
                             />
                             <Box className="hero-overlay" sx={{ 
-                                position: 'relative', 
-                                zIndex: 1, 
-                                textAlign: 'center', 
-                                padding: 4,
-                                backgroundColor: 'rgba(0, 0, 0, 0.7)', 
-                                color: 'white',
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
                                 height: '100%',
+                                backgroundColor: 'rgba(0, 0, 0, 0.4)', 
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'center',
-                                alignItems: 'center'
+                                alignItems: 'center',
+                                padding: 4,
                             }}>
                                 <Box sx={{ 
                                     maxWidth: '800px',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    gap: 3
+                                    textAlign: 'center',
+                                    color: 'white',
                                 }}>
-                                    <Typography 
-                                        variant="h2" 
-                                        component="h1" 
-                                        sx={{ 
-                                            fontWeight: 'bold',
-                                            textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-                                            fontSize: { xs: '2rem', sm: '3rem', md: '4rem' }
-                                        }}
-                                    >
+                                    <Typography variant="h2" component="h1" gutterBottom sx={{ 
+                                        fontSize: { xs: '2rem', md: '3rem' },
+                                        fontWeight: 'bold',
+                                        textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+                                    }}>
                                         {item.title}
                                     </Typography>
-                                    <Typography 
-                                        variant="h5" 
-                                        component="p" 
-                                        sx={{ 
-                                            textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
-                                            fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' }
-                                        }}
-                                    >
+                                    <Typography variant="h5" component="p" gutterBottom sx={{ 
+                                        fontSize: { xs: '1rem', md: '1.5rem' },
+                                        maxWidth: '80%',
+                                        margin: '0 auto',
+                                        textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
+                                    }}>
                                         {item.description}
                                     </Typography>
-                                    <Button 
-                                        variant="contained" 
-                                        color="primary"
-                                        size="large"
-                                        onClick={() => handleWatchNow(item)}
-                                        sx={{ 
-                                            padding: '16px 40px',
-                                            fontSize: '1.25rem',
-                                            fontWeight: 'bold',
-                                            borderRadius: '30px',
-                                            textTransform: 'none',
-                                            boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
-                                            '&:hover': {
-                                                transform: 'scale(1.05)',
-                                                transition: 'transform 0.2s',
-                                                boxShadow: '0 6px 12px rgba(0,0,0,0.4)'
-                                            }
-                                        }}
-                                    >
-                                        Watch Now
-                                    </Button>
+                                    <Link to={{
+                                        pathname: `/details/${item.id}`,
+                                        state: item
+                                    }}>
+                                        <Button 
+                                            variant="contained" 
+                                            color="primary"
+                                            size="large"
+                                            sx={{ 
+                                                fontSize: '1.2rem',
+                                                padding: '10px 30px',
+                                                marginTop: 2,
+                                                boxShadow: '0 4px 8px rgba(0,0,0,0.3)'
+                                            }}
+                                        >
+                                            Watch Now
+                                        </Button>
+                                    </Link>
                                 </Box>
                             </Box>
                         </Box>

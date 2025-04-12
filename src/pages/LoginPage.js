@@ -17,6 +17,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 import '../styles/LoginPage.css'; // Import the CSS file
+import CloseIcon from '@mui/icons-material/Close'; // Import the Close icon from Material-UI
 
 const Login = ({ handleClose, handleOpenRegister }) => {
     const navigate = useNavigate(); // Initialize useNavigate
@@ -31,33 +32,11 @@ const Login = ({ handleClose, handleOpenRegister }) => {
 
     return (
         <div className="login-container">
-            <div 
+            <CloseIcon 
                 onClick={handleClose} 
-                className="close-button"
-                style={{ 
-                    cursor: 'pointer', 
-                    position: 'absolute', 
-                    top: '10px', 
-                    left: '10px',
-                    width: '24px',
-                    height: '24px'
-                }}
-            >
-                <svg 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    xmlns="http://www.w3.org/2000/svg"
-                    style={{ width: '100%', height: '100%' }}
-                >
-                    <path 
-                        d="M18 6L6 18M6 6l12 12" 
-                        stroke="currentColor" 
-                        strokeWidth="2" 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round"
-                    />
-                </svg>
-            </div>
+                className="close-icon" 
+                style={{ cursor: 'pointer', position: 'absolute', top: '10px', left: '10px' }} 
+            />
             <h2>Sign In</h2>
             <form onSubmit={handleSubmit}> {/* Attach handleSubmit to the form */}
                 <input type="email" placeholder="Email Address" required />

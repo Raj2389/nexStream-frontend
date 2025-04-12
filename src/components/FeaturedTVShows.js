@@ -16,35 +16,38 @@
  */
 import React, { useEffect, useState } from 'react';
 import { fetchFeaturedTVShows } from '../api'; // Import the API function
-import { Box, Card, CardMedia, CardContent, Typography, Button } from '@mui/material';
+import { Box, Card, CardMedia, CardContent, Typography, Button, CircularProgress, Alert } from '@mui/material';
+import { Link } from 'react-router-dom';
 import Slider from 'react-slick'; // Import the slider component
-import { useNavigate } from 'react-router-dom';
 import 'slick-carousel/slick/slick.css'; 
 import 'slick-carousel/slick/slick-theme.css'; 
 import '../styles/FeaturedTVShows.css'; // Import custom CSS for styling
 
 const FeaturedTVShows = () => {
     const [tvShows, setTVShows] = useState([]);
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const loadTVShows = async () => {
             try {
-                const fetchedTVShows = await fetchFeaturedTVShows(); // Fetch featured TV shows
+                setLoading(true);
+                setError(null);
+                const fetchedTVShows = await fetchFeaturedTVShows();
+                if (!Array.isArray(fetchedTVShows)) {
+                    throw new Error('Invalid data format received from server');
+                }
                 setTVShows(fetchedTVShows);
             } catch (error) {
                 console.error('Error loading TV shows:', error);
+                setError(error.message || 'Failed to load featured TV shows. Please try again later.');
+            } finally {
+                setLoading(false);
             }
         };
 
         loadTVShows();
     }, []);
-
-    const handleWatchNow = (show) => {
-        const showId = show.id || show._id;
-        console.log('Navigating to TV show details:', showId);
-        navigate(`/details/${showId}`);
-    };
 
     // Slider settings
     const settings = {
@@ -67,6 +70,39 @@ const FeaturedTVShows = () => {
         ],
     };
 
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box sx={{ padding: 2, textAlign: 'center' }}>
+                <Alert severity="error" sx={{ mb: 2 }}>
+                    {error}
+                </Alert>
+                <Button 
+                    variant="contained" 
+                    color="primary" 
+                    onClick={() => window.location.reload()}
+                >
+                    Try Again
+                </Button>
+            </Box>
+        );
+    }
+
+    if (tvShows.length === 0) {
+        return (
+            <Box sx={{ padding: 2, textAlign: 'center' }}>
+                <Typography variant="h6">No featured TV shows available at the moment.</Typography>
+            </Box>
+        );
+    }
+
     return (
         <Box sx={{ padding: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Box sx={{ width: '70%' }}> {/* Adjusted width of the slider to make it smaller */}
@@ -75,11 +111,11 @@ const FeaturedTVShows = () => {
                 </Typography>
                 <Slider {...settings}>
                     {tvShows.map((show) => (
-                        <Card key={show._id} className="tv-show-card" sx={{ width: 'calc(33.33% - 20px)', height: 350, margin: '0 10px', position: 'relative' }}> {/* Set position relative for absolute positioning of content */}
+                        <Card key={show.id} className="tv-show-card" sx={{ width: 'calc(33.33% - 20px)', height: 350, margin: '0 10px', position: 'relative' }}> {/* Set position relative for absolute positioning of content */}
                             <CardMedia
                                 component="img"
                                 height="250" // Set height for the image
-                                image={show.smallPosterUrl}
+                                image={show.largePosterUrl}
                                 alt={show.title}
                                 sx={{ objectFit: 'cover' }} // Ensure the image covers the area
                             />
@@ -97,14 +133,18 @@ const FeaturedTVShows = () => {
                                 <Typography gutterBottom variant="h6" component="div" sx={{ fontSize: '1rem' }}>
                                     {show.title}
                                 </Typography>
-                                <Button 
-                                    size="small" 
-                                    variant="contained" 
-                                    color="primary" 
-                                    onClick={() => handleWatchNow(show)}
-                                >
-                                    Watch Now
-                                </Button>
+                                <Link to={{
+                                    pathname: `/details/${show.id}`,
+                                    state: { type: 'tvshow', id: show.id }
+                                }}>
+                                    <Button 
+                                        size="small" 
+                                        variant="contained" 
+                                        color="primary"
+                                    >
+                                        Watch Now
+                                    </Button>
+                                </Link>
                             </CardContent>
                         </Card>
                     ))}

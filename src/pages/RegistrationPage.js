@@ -14,10 +14,9 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
-import { registerUser } from '../api';
 import '../styles/LoginPage.css'; // Reuse the CSS file from the login page for consistent styling
 
-const RegistrationPage = ({ handleOpenLogin, handleClose }) => { // Add handleClose prop
+const RegistrationPage = ({ handleOpenLogin }) => { // Accept handleOpenLogin as a prop
     const navigate = useNavigate(); // Initialize useNavigate
     const [formData, setFormData] = useState({
         firstName: '',
@@ -25,103 +24,62 @@ const RegistrationPage = ({ handleOpenLogin, handleClose }) => { // Add handleCl
         email: '',
         password: ''
     });
-    const [error, setError] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
+        setFormData(prevState => ({
+            ...prevState,
             [name]: value
         }));
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault(); // Prevent the default form submission
-        setError('');
-        
-        try {
-            await registerUser(formData);
-            navigate('/home');
-        } catch (err) {
-            setError(err.message || 'Registration failed. Please try again.');
-        }
-    };
-
-    const handleForgotPassword = () => {
-        // Navigate to forgot password page or show forgot password modal
-        navigate('/forgot-password');
+        // Here you can add your registration logic (e.g., API call)
+        console.log('Registration data:', formData);
+        // After successful registration, navigate to the home page
+        navigate('/home'); // Change '/home' to your actual home route if different
     };
 
     return (
         <div className="login-container">
-            <div 
-                onClick={handleClose} 
-                className="close-button"
-                style={{ 
-                    cursor: 'pointer', 
-                    position: 'absolute', 
-                    top: '10px', 
-                    left: '10px',
-                    width: '24px',
-                    height: '24px'
-                }}
-            >
-                <svg 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    xmlns="http://www.w3.org/2000/svg"
-                    style={{ width: '100%', height: '100%' }}
-                >
-                    <path 
-                        d="M18 6L6 18M6 6l12 12" 
-                        stroke="currentColor" 
-                        strokeWidth="2" 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round"
-                    />
-                </svg>
-            </div>
             <h2>Register</h2>
-            {error && <div className="error-message">{error}</div>}
             <form onSubmit={handleSubmit}> {/* Attach handleSubmit to the form */}
-                <input
-                    type="text"
+                <input 
+                    type="text" 
                     name="firstName"
-                    placeholder="First Name"
+                    placeholder="First Name" 
                     value={formData.firstName}
                     onChange={handleChange}
-                    required
+                    required 
                 />
-                <input
-                    type="text"
+                <input 
+                    type="text" 
                     name="lastName"
-                    placeholder="Last Name"
+                    placeholder="Last Name" 
                     value={formData.lastName}
                     onChange={handleChange}
-                    required
+                    required 
                 />
-                <input
-                    type="email"
+                <input 
+                    type="email" 
                     name="email"
-                    placeholder="Email Address"
+                    placeholder="Email Address" 
                     value={formData.email}
                     onChange={handleChange}
-                    required
+                    required 
                 />
-                <input
-                    type="password"
+                <input 
+                    type="password" 
                     name="password"
-                    placeholder="Password"
+                    placeholder="Password" 
                     value={formData.password}
                     onChange={handleChange}
-                    required
+                    required 
                 />
                 <button type="submit">Register</button>
             </form>
             <p className="or-text">OR</p>
-            <p className="forgot-password">
-                <span onClick={handleForgotPassword} style={{ cursor: 'pointer', color: 'blue' }}>Forgot Password?</span>
-            </p>
             <p className="existing-user">
                 Already a user? <span onClick={handleOpenLogin} style={{ cursor: 'pointer', color: 'blue' }}>Click here</span> {/* Call handleOpenLogin on click */}
             </p>

@@ -1,126 +1,77 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, CardMedia, CardContent, Button } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
-import { fetchTVShows } from '../api';
+import { fetchTVShows } from '../api'; // Import the API function
+import { Box, Card, CardMedia, CardContent, Typography, Button } from '@mui/material';
+import { Link } from 'react-router-dom'; // Import Link for navigation
 
 const AllTVShows = () => {
     const [tvShows, setTVShows] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const loadTVShows = async () => {
             try {
-                const fetchedTVShows = await fetchTVShows();
-                console.log('Raw fetched TV shows data:', fetchedTVShows);
-                if (Array.isArray(fetchedTVShows)) {
-                    console.log('First TV show in array:', fetchedTVShows[0]);
-                    console.log('First TV show ID:', fetchedTVShows[0]?.id || fetchedTVShows[0]?._id);
-                }
+                const fetchedTVShows = await fetchTVShows(); // Fetch all TV shows
                 setTVShows(fetchedTVShows);
             } catch (error) {
-                setError('Failed to load TV shows');
                 console.error('Error loading TV shows:', error);
-            } finally {
-                setLoading(false);
             }
         };
 
         loadTVShows();
     }, []);
 
-    const handleWatchNow = (show) => {
-        console.log('Watch Now clicked for TV show:', show);
-        const showId = show.id || show._id;
-        console.log('TV show ID being used:', showId);
-        if (!showId) {
-            console.error('No TV show ID provided');
-            return;
-        }
-        navigate(`/details/${showId}`);
-    };
-
-    if (loading) {
-        return <Typography>Loading...</Typography>;
-    }
-
-    if (error) {
-        return <Typography color="error">{error}</Typography>;
-    }
-
     return (
-        <Box sx={{ 
-            padding: '40px 80px',
-            maxWidth: '1600px',
-            margin: '0 auto'
-        }}>
-            <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>
-                All TV Shows
-            </Typography>
-            <Box sx={{ 
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: 3
-            }}>
-                {tvShows.map((show) => {
-                    console.log('Rendering TV show:', show);
-                    const showId = show.id || show._id;
-                    console.log('TV show ID:', showId);
-                    return (
-                        <Card key={showId} sx={{ 
-                            width: '100%',
-                            height: 320,
-                            display: 'flex',
-                            flexDirection: 'column'
-                        }}>
-                            <CardMedia
-                                component="img"
-                                height="180"
-                                image={show.smallPosterUrl}
-                                alt={show.title}
-                                sx={{ objectFit: 'cover' }}
-                            />
-                            <CardContent sx={{ 
-                                flexGrow: 1,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'space-between',
-                                p: 2
+        <Box sx={{ padding: 2 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+                {tvShows.map((show) => (
+                    <Card key={show.id} sx={{ width: 250, height: 350, margin: '10px', position: 'relative' }}>
+                        <CardMedia
+                            component="img"
+                            height="250"
+                            image={show.largePosterUrl}
+                            alt={show.title}
+                            sx={{ objectFit: 'cover' }}
+                        />
+                        <CardContent 
+                            sx={{ 
+                                position: 'absolute', 
+                                bottom: 0, 
+                                left: 0,
+                                right: 0,
+                                backgroundColor: 'rgba(0, 0, 0, 0.7)', 
+                                color: 'white',
+                                padding: '8px' 
+                            }}
+                        >
+                            <Typography 
+                                gutterBottom 
+                                variant="h6" 
+                                component="div" 
+                                sx={{ 
+                                    fontSize: '1rem', 
+                                    overflow: 'hidden', 
+                                    textOverflow: 'ellipsis', 
+                                    display: '-webkit-box', 
+                                    WebkitBoxOrient: 'vertical', 
+                                    WebkitLineClamp: 2 
+                                }}
+                            >
+                                {show.title}
+                            </Typography>
+                            <Link to={{
+                                pathname: `/details/${show.id}`, // Correct path to the Details page
+                                state: show // Pass the entire show as state
                             }}>
-                                <Typography 
-                                    gutterBottom 
-                                    variant="h6" 
-                                    component="div"
-                                    sx={{ 
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        display: '-webkit-box',
-                                        WebkitLineClamp: 2,
-                                        WebkitBoxOrient: 'vertical',
-                                        mb: 1
-                                    }}
-                                >
-                                    {show.title}
-                                </Typography>
                                 <Button 
+                                    size="small" 
                                     variant="contained" 
-                                    color="primary" 
-                                    onClick={() => handleWatchNow(show)}
-                                    size="small"
-                                    sx={{ 
-                                        width: 'fit-content',
-                                        alignSelf: 'flex-start',
-                                        fontSize: '0.875rem',
-                                        py: 0.5
-                                    }}
+                                    color="primary"
                                 >
                                     Watch Now
                                 </Button>
-                            </CardContent>
-                        </Card>
-                    );
-                })}
+                            </Link>
+                        </CardContent>
+                    </Card>
+                ))}
             </Box>
         </Box>
     );

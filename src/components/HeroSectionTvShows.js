@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { fetchFeaturedContentTvShows } from '../api';
+import { fetchFeaturedContentTvShows } from '../api'; // Import the API function
 import { Box, Typography, Button } from '@mui/material';
-import Slider from 'react-slick';
-import { useNavigate } from 'react-router-dom';
+import Slider from 'react-slick'; // Import the slider component
+import { Link } from 'react-router-dom'; // Import Link for navigation
 import 'slick-carousel/slick/slick.css'; 
 import 'slick-carousel/slick/slick-theme.css'; 
-import '../styles/HeroSection.css';
+import '../styles/HeroSection.css'; // Import custom CSS for styling
 
 const HeroSectionTvShows = () => {
-    const [content, setContent] = useState([]);
-    const navigate = useNavigate();
+    const [content, setContent] = useState([]); // Store multiple TV shows
 
     useEffect(() => {
         const loadContent = async () => {
             try {
-                const fetchedContent = await fetchFeaturedContentTvShows();
-                setContent(fetchedContent);
+                const fetchedContent = await fetchFeaturedContentTvShows(); // Fetch featured TV shows
+                setContent(fetchedContent); // Set the fetched content
             } catch (error) {
                 console.error('Error loading content:', error);
             }
@@ -24,21 +23,16 @@ const HeroSectionTvShows = () => {
         loadContent();
     }, []);
 
-    const handleWatchNow = (item) => {
-        const itemId = item.id || item._id;
-        console.log('Navigating to TV show details:', itemId);
-        navigate(`/details/${itemId}`);
-    };
-
+    // Slider settings
     const settings = {
         dots: true,
         infinite: true,
         speed: 500,
         slidesToShow: 1,
         slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 3000,
-        fade: true,
+        autoplay: true, // Enable autoplay
+        autoplaySpeed: 3000, // Change slides every 3 seconds
+        fade: true, // Optional: Add fade effect between slides
     };
 
     return (
@@ -46,7 +40,7 @@ const HeroSectionTvShows = () => {
             {content.length > 0 ? (
                 <Slider {...settings}>
                     {content.map((item) => (
-                        <Box key={item._id} className="hero-slide" sx={{ height: '100vh' }}>
+                        <Box key={item.id} className="hero-slide" sx={{ height: '100vh' }}>
                             <img
                                 src={item.largePosterUrl}
                                 alt={item.title}
@@ -54,59 +48,57 @@ const HeroSectionTvShows = () => {
                                 style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }}
                             />
                             <Box className="hero-overlay" sx={{ 
-                                position: 'relative', 
-                                zIndex: 1, 
-                                textAlign: 'center', 
-                                padding: 4,
-                                backgroundColor: 'rgba(0, 0, 0, 0.7)', 
-                                color: 'white',
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
                                 height: '100%',
+                                backgroundColor: 'rgba(0, 0, 0, 0.4)', 
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'center',
-                                alignItems: 'center'
+                                alignItems: 'center',
+                                padding: 4,
                             }}>
-                                <Typography 
-                                    variant="h2" 
-                                    component="h1" 
-                                    gutterBottom
-                                    sx={{ 
+                                <Box sx={{ 
+                                    maxWidth: '800px',
+                                    textAlign: 'center',
+                                    color: 'white',
+                                }}>
+                                    <Typography variant="h2" component="h1" gutterBottom sx={{ 
+                                        fontSize: { xs: '2rem', md: '3rem' },
                                         fontWeight: 'bold',
-                                        marginBottom: 3,
                                         textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-                                    }}
-                                >
-                                    {item.title}
-                                </Typography>
-                                <Typography 
-                                    variant="h5" 
-                                    component="p" 
-                                    sx={{ 
-                                        maxWidth: '800px',
-                                        marginBottom: 4,
-                                        lineHeight: 1.6,
+                                    }}>
+                                        {item.title}
+                                    </Typography>
+                                    <Typography variant="h5" component="p" gutterBottom sx={{ 
+                                        fontSize: { xs: '1rem', md: '1.5rem' },
+                                        maxWidth: '80%',
+                                        margin: '0 auto',
                                         textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
-                                    }}
-                                >
-                                    {item.description}
-                                </Typography>
-                                <Button 
-                                    variant="contained" 
-                                    color="primary"
-                                    size="large"
-                                    onClick={() => handleWatchNow(item)}
-                                    sx={{ 
-                                        padding: '12px 32px',
-                                        fontSize: '1.2rem',
-                                        fontWeight: 'bold',
-                                        '&:hover': {
-                                            transform: 'scale(1.05)',
-                                            transition: 'transform 0.2s'
-                                        }
-                                    }}
-                                >
-                                    Watch Now
-                                </Button>
+                                    }}>
+                                        {item.description}
+                                    </Typography>
+                                    <Link to={{
+                                        pathname: `/details/${item.id}`,
+                                        state: item
+                                    }}>
+                                        <Button 
+                                            variant="contained" 
+                                            color="primary"
+                                            size="large"
+                                            sx={{ 
+                                                fontSize: '1.2rem',
+                                                padding: '10px 30px',
+                                                marginTop: 2,
+                                                boxShadow: '0 4px 8px rgba(0,0,0,0.3)'
+                                            }}
+                                        >
+                                            Watch Now
+                                        </Button>
+                                    </Link>
+                                </Box>
                             </Box>
                         </Box>
                     ))}
