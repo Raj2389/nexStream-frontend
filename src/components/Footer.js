@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Box, Typography } from '@mui/material'; // Import Material-UI components
-import '@fortawesome/fontawesome-free/css/all.min.css'; // Import Font Awesome CSS
+import 'node_modules/@fortawesome/fontawesome-free/css/all.min.css'; // Import Font Awesome CSS
 
 const Footer = () => {
     return (
