@@ -16,7 +16,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 import { registerUser } from '../api';
 import '../styles/LoginPage.css'; // Reuse the CSS file from the login page for consistent styling
-import CloseIcon from '@mui/icons-material/Close'; // Add CloseIcon import
 
 const RegistrationPage = ({ handleOpenLogin, handleClose }) => { // Add handleClose prop
     const navigate = useNavigate(); // Initialize useNavigate
@@ -55,11 +54,22 @@ const RegistrationPage = ({ handleOpenLogin, handleClose }) => { // Add handleCl
 
     return (
         <div className="login-container">
-            <CloseIcon 
+            <button 
                 onClick={handleClose} 
-                className="close-icon" 
-                style={{ cursor: 'pointer', position: 'absolute', top: '10px', left: '10px' }} 
-            />
+                className="close-button"
+                style={{ 
+                    cursor: 'pointer', 
+                    position: 'absolute', 
+                    top: '10px', 
+                    left: '10px',
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '20px',
+                    color: '#333'
+                }}
+            >
+                ×
+            </button>
             <h2>Register</h2>
             {error && <div className="error-message">{error}</div>}
             <form onSubmit={handleSubmit}> {/* Attach handleSubmit to the form */}
