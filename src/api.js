@@ -130,3 +130,113 @@ export const searchContent = async (term) => {
 
     return { movies, tvShows };
 };
+
+export const fetchUserData = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        console.log('Token from localStorage:', token ? 'Present' : 'Missing');
+        
+        if (!token) {
+            throw new Error('No authentication token found');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/api/users/me`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+
+        console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            throw new Error(`Failed to fetch user data: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('User data received:', data);
+        return data;
+    } catch (error) {
+        console.error('Error in fetchUserData:', error);
+        throw error;
+    }
+};
+
+export const loginUser = async (email, password) => {
+    try {
+        console.log('Attempting login with:', email);
+        const response = await fetch(`${API_BASE_URL}/api/users/authenticate?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log('Login response status:', response.status);
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('Login error response:', errorData);
+            throw new Error(errorData.message || 'Login failed');
+        }
+
+        const data = await response.json();
+        console.log('Raw login response data:', data);
+        
+        if (!data || !data.token) {
+            console.error('Invalid response structure:', data);
+            throw new Error('Invalid response from server');
+        }
+
+        // Store the token immediately
+        localStorage.setItem('token', data.token);
+        console.log('Token stored in localStorage');
+
+        // Extract user data
+        const userData = {
+            userId: data.user.id,
+            id: data.user.id,
+            email: data.user.email,
+            firstName: data.user.firstName,
+            lastName: data.user.lastName
+        };
+
+        console.log('Processed user data:', userData);
+
+        return {
+            token: data.token,
+            user: userData
+        };
+    } catch (error) {
+        console.error('Login error:', error);
+        throw error;
+    }
+};
+
+export const registerUser = async (userData) => {
+    try {
+        console.log('Attempting registration with:', userData);
+        const response = await fetch(`${API_BASE_URL}/api/users`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Registration failed');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Registration error:', error);
+        throw error;
+    }
+};

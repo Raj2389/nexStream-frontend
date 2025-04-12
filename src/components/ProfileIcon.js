@@ -29,8 +29,14 @@ const ProfileIcon = () => {
         setAnchorEl(null); // Close the menu
     };
 
+    const handleProfile = () => {
+        navigate('/dashboard');
+        handleClose();
+    };
+
     const handleLogout = () => {
         navigate('/'); // Change to your actual login route
+        handleClose();
     };
 
     return (
@@ -43,6 +49,7 @@ const ProfileIcon = () => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
+                <MenuItem onClick={handleProfile}>Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
         </div>
